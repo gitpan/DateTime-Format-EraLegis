@@ -27,17 +27,15 @@ my %WriteMakefileArgs = (
   "LICENSE" => "perl",
   "NAME" => "DateTime::Format::EraLegis",
   "PREREQ_PM" => {
+    "Any::Moose" => 0,
     "Carp" => 0,
     "DBI" => 0,
     "JSON" => 0,
     "Method::Signatures" => 0,
-    "Moose" => 0,
-    "Moose::Util::TypeConstraints" => 0,
-    "MooseX::Attribute::Chained" => 0,
     "Roman::Unicode" => 0,
     "utf8" => 0
   },
-  "VERSION" => "0.001",
+  "VERSION" => "0.002",
   "test" => {
     "TESTS" => "t/*.t"
   }

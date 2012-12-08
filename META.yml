@@ -19,14 +19,12 @@ meta-spec:
   version: 1.4
 name: DateTime-Format-EraLegis
 requires:
+  Any::Moose: 0
   Carp: 0
   DBI: 0
   JSON: 0
   Method::Signatures: 0
-  Moose: 0
-  Moose::Util::TypeConstraints: 0
-  MooseX::Attribute::Chained: 0
   Roman::Unicode: 0
   perl: 5.010
   utf8: 0
-version: 0.001
+version: 0.002

@@ -35,14 +35,18 @@ my $out = ''.$dt;
 is $out, '☉ in 12° ♐ : ☽ in 10° ♌ : ☽ : ⅠⅤⅹⅹ',
     'Basic rendering';
 
-$dtf->style( DateTime::Format::EraLegis::Style->new(
-                 lang=>'latin', show_dow=>0, show_year=>1) );
+$dtf = DateTime::Format::EraLegis->new(
+    ephem => $ephem,
+    style => DateTime::Format::EraLegis::Style->new(
+        lang=>'latin', show_dow=>0, show_year=>1) );
 is $dtf->format_datetime($dt),
     '☉ in 12° Sagittarii : ☽ in 10° Leonis : Anno ⅠⅤⅹⅹ æræ legis',
     'Basic rendering';
 
-$dtf->style( DateTime::Format::EraLegis::Style->new(
-                 lang=>'latin', show_terse=>1, show_dow=>1, show_year=>0) );
+$dtf = DateTime::Format::EraLegis->new(
+    ephem => $ephem,
+    style => DateTime::Format::EraLegis::Style->new(
+        lang=>'latin', show_terse=>1, show_dow=>1, show_year=>0) );
 is $dtf->format_datetime($dt),
     '☉ 12° Sagittarii : ☽ 10° Leonis : dies Lunae',
     'Basic rendering';
