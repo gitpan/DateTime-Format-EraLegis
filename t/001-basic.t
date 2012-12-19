@@ -8,6 +8,7 @@ use Test::More;
 use Encode qw(encode_utf8);
 use DateTime;
 use DateTime::Format::ISO8601;
+use DBD::SQLite;
 
 BEGIN {
     use_ok('DateTime::Format::EraLegis');

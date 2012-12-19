@@ -3,6 +3,7 @@ abstract: 'DateTime formatter for Era Legis (http://oto-usa.org/calendar.html)'
 author:
   - 'Clay Fouts <cfouts@khephera.net>'
 build_requires:
+  DBD::SQLite: 0
   DateTime: 0
   DateTime::Format::ISO8601: 0
   Encode: 0
@@ -27,4 +28,4 @@ requires:
   Roman::Unicode: 0
   perl: 5.010
   utf8: 0
-version: 0.002
+version: 0.003

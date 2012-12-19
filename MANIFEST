@@ -6,6 +6,4 @@ README
 dist.ini
 lib/DateTime/Format/EraLegis.pm
 t/001-basic.t
-t/luna.ephem
-t/sol.ephem
 t/test.sqlite3

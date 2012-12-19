@@ -12,6 +12,7 @@ my %WriteMakefileArgs = (
   "ABSTRACT" => "DateTime formatter for Era Legis (http://oto-usa.org/calendar.html)",
   "AUTHOR" => "Clay Fouts <cfouts\@khephera.net>",
   "BUILD_REQUIRES" => {
+    "DBD::SQLite" => 0,
     "DateTime" => 0,
     "DateTime::Format::ISO8601" => 0,
     "Encode" => 0,
@@ -35,7 +36,7 @@ my %WriteMakefileArgs = (
     "Roman::Unicode" => 0,
     "utf8" => 0
   },
-  "VERSION" => "0.002",
+  "VERSION" => "0.003",
   "test" => {
     "TESTS" => "t/*.t"
   }
