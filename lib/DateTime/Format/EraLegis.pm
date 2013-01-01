@@ -1,13 +1,12 @@
 package DateTime::Format::EraLegis;
 {
-  $DateTime::Format::EraLegis::VERSION = '0.003';
+  $DateTime::Format::EraLegis::VERSION = '0.004';
 }
 
 # ABSTRACT: DateTime formatter for Era Legis (http://oto-usa.org/calendar.html)
 
 use 5.010;
 use Any::Moose;
-use JSON;
 use Method::Signatures;
 
 has 'ephem' => (
@@ -23,7 +22,7 @@ has 'style' => (
     );
 
 method _build_ephem {
-    return DateTime::Format::EraLegis::Ephem->new;
+    return DateTime::Format::EraLegis::Ephem::DBI->new;
 }
 
 method _build_style {
@@ -42,27 +41,29 @@ method format_datetime(DateTime $dt, Str $format = 'plain') {
 
     my %tdate = (
         evdate => $dt->ymd . ' ' . $dt->hms,
-        year => [ int(($dt->year - 1904)/22), ($dt->year - 1904)%22 ],
         dow => $dow,
         );
 
     for ( qw(sol luna) ) {
         my $deg = $self->ephem->lookup( $_, $dt );
         $tdate{$_}{sign} = int($deg / 30);
-        $tdate{$_}{deg} = $deg % 30;
+        $tdate{$_}{deg} = int($deg % 30);
     }
+
+    my $year1 = int( ($dt->year - 1904) / 22 );
+    my $year2 = ($dt->year - 1904) % 22;
+    if ($dt->month <= 3 && $tdate{sol}{sign} > 0 && $dt->year > 1904) {
+        $year2--;
+        if ($year2 == -1) {
+            $year2 = 21;
+            $year1--;
+        }
+    }
+    $tdate{year} = [ int $year1, int $year2 ];
 
     $tdate{plain} = $self->style->express( \%tdate );
 
-    if ($format eq 'json') {
-        return JSON->new->pretty->encode(\%tdate);
-    }
-    elsif ($format eq 'raw') {
-        return \%tdate;
-    }
-    else {
-        return $tdate{plain};
-    }
+    return ($format eq 'raw') ? \%tdate : $tdate{plain};
 }
 
 
@@ -72,7 +73,18 @@ no Any::Moose;
 ######################################################
 package DateTime::Format::EraLegis::Ephem;
 {
-  $DateTime::Format::EraLegis::Ephem::VERSION = '0.003';
+  $DateTime::Format::EraLegis::Ephem::VERSION = '0.004';
+}
+use Any::Moose qw(Role);
+
+requires 'lookup';
+
+no Any::Moose;
+
+######################################################
+package DateTime::Format::EraLegis::Ephem::DBI;
+{
+  $DateTime::Format::EraLegis::Ephem::DBI::VERSION = '0.004';
 }
 
 use 5.010;
@@ -80,6 +92,8 @@ use Any::Moose;
 use Carp;
 use DBI;
 use Method::Signatures;
+
+with 'DateTime::Format::EraLegis::Ephem';
 
 has 'ephem_db' => (
     is => 'ro',
@@ -122,7 +136,7 @@ no Any::Moose;
 
 package DateTime::Format::EraLegis::Style;
 {
-  $DateTime::Format::EraLegis::Style::VERSION = '0.003';
+  $DateTime::Format::EraLegis::Style::VERSION = '0.004';
 }
 
 use 5.010;
@@ -258,15 +272,16 @@ __END__
 
 =head1 NAME
 
-DateTime::Format::EraLegis - DateTime converter for Era Legis
-DateTime::Format::EraLegis::Ephem - planetary ephemeris data
-DateTime::Format::EraLegis::Style - customize output styles
+ DateTime::Format::EraLegis - DateTime converter for Era Legis
+ DateTime::Format::EraLegis::Ephem - planetary ephemeris role
+ DateTime::Format::EraLegis::Ephem::DBI - default ephemeris getter
+ DateTime::Format::EraLegis::Style - customize output styles
 
 =head1 SYNOPSIS
 
  use DateTime::Format::EraLegis;
 
- my $ephem = DateTime::Format::EraLegis::Ephem->new(
+ my $ephem = DateTime::Format::EraLegis::Ephem::DBI->new(
      ephem_db => 'db.sqlite3');
  my $style = DateTime::Format::EraLegis::Style->new(
      show_terse => 1, lang => 'symbol');
@@ -302,7 +317,7 @@ DateTime::Format::EraLegis
 
 =item *
 
-ephem: DT::F::EL::Ephem object. Creates a new one by default.
+ephem: DT::F::EL::Ephem object. Creates a new DBI one by default.
 
 =item *
 
@@ -311,16 +326,36 @@ style: DT::F::EL::Style object. Creates a new one by default.
 =item *
 
 format_datetime(DateTime $dt, Str $format): Standard interface for a
-DateTime::Format package. $format is one of 'plain', 'json', or 'raw'.
+DateTime::Format package. $format is one of 'plain' or 'raw'.
 Defaults to 'plain'.
 
 =back
 
 =item *
 
-DateTime::Format::Ephem
+DateTime::Format::EraLegis::Ephem (Role)
 
 =over
+
+=item *
+
+lookup(Str $body, DateTime $dt): Required by any role consumer. $body
+is one of "sol" or "luna". $dt is the date in question (in UTC!).
+Returns the number of degrees away from 0 degrees Aries. Divide by
+thirty to get the sign. Modulo by thirty to get the degrees of that
+sign.
+
+=back
+
+=item *
+
+DateTime::Format::EraLegis::Ephem::DBI
+
+=over
+
+=item *
+
+Consumes DT::F::EL::Ephem role.
 
 =item *
 
@@ -331,13 +366,6 @@ of $ENV{ERALEGIS_EPHEMDB}.
 
 dbh: DBI handle for ephemeris database. Defaults to creating a new one pointing
 to the ephem_db database.
-
-=item *
-
-lookup(Str $body, DateTime $dt): $body is one of "sol" or "luna". $dt is the
-date in question (in UTC!). Returns the number of degrees away from 0 degrees
-Aries. Divide by thirty to get the sign. Modulo by thirty to get the degrees
-of that sign.
 
 =back
 
@@ -374,9 +402,9 @@ the style to alter the default template.
 
 =head1 DATABASE SCHEMA
 
-The schema is very simple and the querying SQL very generic. Most DBI
-backends should work without issue, though SQLite3 is the only tested
-one. The schema is:
+The schema for the DBI ephemeris table is very simple and the querying
+SQL very generic. Most DBI backends should work without issue, though
+SQLite3 is the only one tested. The schema is:
 
  CREATE TABLE ephem (
    body TEXT,               -- one of 'sol' or 'luna'

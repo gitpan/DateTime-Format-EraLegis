@@ -17,7 +17,7 @@ BEGIN {
 binmode(STDOUT, ':encoding(utf8)');
 binmode(STDERR, ':encoding(utf8)');
 
-my $ephem = DateTime::Format::EraLegis::Ephem->new(
+my $ephem = DateTime::Format::EraLegis::Ephem::DBI->new(
     ephem_db => './t/test.sqlite3' );
 
 my $dtf;
