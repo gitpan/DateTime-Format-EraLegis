@@ -1,6 +1,6 @@
 package DateTime::Format::EraLegis;
 {
-  $DateTime::Format::EraLegis::VERSION = '0.004';
+  $DateTime::Format::EraLegis::VERSION = '0.005';
 }
 
 # ABSTRACT: DateTime formatter for Era Legis (http://oto-usa.org/calendar.html)
@@ -50,16 +50,9 @@ method format_datetime(DateTime $dt, Str $format = 'plain') {
         $tdate{$_}{deg} = int($deg % 30);
     }
 
-    my $year1 = int( ($dt->year - 1904) / 22 );
-    my $year2 = ($dt->year - 1904) % 22;
-    if ($dt->month <= 3 && $tdate{sol}{sign} > 0 && $dt->year > 1904) {
-        $year2--;
-        if ($year2 == -1) {
-            $year2 = 21;
-            $year1--;
-        }
-    }
-    $tdate{year} = [ int $year1, int $year2 ];
+    my $years = $dt->year -
+        (($dt->month <= 3 && $tdate{sol}{sign} > 0) ? 1905 : 1904);
+    $tdate{year} = [ int( $years/22 ), int( $years%22 ) ];
 
     $tdate{plain} = $self->style->express( \%tdate );
 
@@ -73,7 +66,7 @@ no Any::Moose;
 ######################################################
 package DateTime::Format::EraLegis::Ephem;
 {
-  $DateTime::Format::EraLegis::Ephem::VERSION = '0.004';
+  $DateTime::Format::EraLegis::Ephem::VERSION = '0.005';
 }
 use Any::Moose qw(Role);
 
@@ -84,7 +77,7 @@ no Any::Moose;
 ######################################################
 package DateTime::Format::EraLegis::Ephem::DBI;
 {
-  $DateTime::Format::EraLegis::Ephem::DBI::VERSION = '0.004';
+  $DateTime::Format::EraLegis::Ephem::DBI::VERSION = '0.005';
 }
 
 use 5.010;
@@ -136,7 +129,7 @@ no Any::Moose;
 
 package DateTime::Format::EraLegis::Style;
 {
-  $DateTime::Format::EraLegis::Style::VERSION = '0.004';
+  $DateTime::Format::EraLegis::Style::VERSION = '0.005';
 }
 
 use 5.010;
