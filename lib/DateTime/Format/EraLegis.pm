@@ -1,6 +1,6 @@
 package DateTime::Format::EraLegis;
 {
-  $DateTime::Format::EraLegis::VERSION = '0.005';
+  $DateTime::Format::EraLegis::VERSION = '0.006';
 }
 
 # ABSTRACT: DateTime formatter for Era Legis (http://oto-usa.org/calendar.html)
@@ -66,7 +66,7 @@ no Any::Moose;
 ######################################################
 package DateTime::Format::EraLegis::Ephem;
 {
-  $DateTime::Format::EraLegis::Ephem::VERSION = '0.005';
+  $DateTime::Format::EraLegis::Ephem::VERSION = '0.006';
 }
 use Any::Moose qw(Role);
 
@@ -77,7 +77,7 @@ no Any::Moose;
 ######################################################
 package DateTime::Format::EraLegis::Ephem::DBI;
 {
-  $DateTime::Format::EraLegis::Ephem::DBI::VERSION = '0.005';
+  $DateTime::Format::EraLegis::Ephem::DBI::VERSION = '0.006';
 }
 
 use 5.010;
@@ -129,7 +129,7 @@ no Any::Moose;
 
 package DateTime::Format::EraLegis::Style;
 {
-  $DateTime::Format::EraLegis::Style::VERSION = '0.005';
+  $DateTime::Format::EraLegis::Style::VERSION = '0.006';
 }
 
 use 5.010;

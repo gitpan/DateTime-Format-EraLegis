@@ -23,9 +23,8 @@ requires:
   Any::Moose: 0
   Carp: 0
   DBI: 0
-  DateTime::Format::EraLegis::Ephem: 0
   Method::Signatures: 0
   Roman::Unicode: 0
   perl: 5.010
   utf8: 0
-version: 0.005
+version: 0.006

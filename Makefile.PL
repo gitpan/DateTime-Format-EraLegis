@@ -31,12 +31,11 @@ my %WriteMakefileArgs = (
     "Any::Moose" => 0,
     "Carp" => 0,
     "DBI" => 0,
-    "DateTime::Format::EraLegis::Ephem" => 0,
     "Method::Signatures" => 0,
     "Roman::Unicode" => 0,
     "utf8" => 0
   },
-  "VERSION" => "0.005",
+  "VERSION" => "0.006",
   "test" => {
     "TESTS" => "t/*.t"
   }
